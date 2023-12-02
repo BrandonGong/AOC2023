@@ -14,13 +14,20 @@ func main() {
 		"blue":  14,
 	}
 	var sum int
+	var power int
 	games := ParseInput()
 	for gameId, results := range games {
 		if CheckPossible(results, query) {
 			sum += gameId
 		}
+		product := 1
+		for _, count := range results {
+			product *= count
+		}
+		power += product
 	}
-	fmt.Printf("Sum of Game IDs: %d\n", sum)
+	fmt.Printf("Part 1: Sum of possible Game IDs: %d\n", sum)
+	fmt.Printf("Part 2: Power of all games: %d\n", power)
 }
 
 func ParseInput() map[int]map[string]int {
