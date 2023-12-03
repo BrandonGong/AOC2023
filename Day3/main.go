@@ -21,28 +21,37 @@ type Symbol struct {
 
 func main() {
 	numberMap, symbolMap, maxLines := ParseInput("input.txt")
-	var sum int
+	var totalPartNumbers int
+	var totalGearRatios int
 	// Find numbers that are adjacent to a symbol
 	for line := 0; line <= maxLines; line++ {
 		searchStart := max(0, line-1)
 		searchEnd := min(maxLines, line+1)
 		for _, symbol := range symbolMap[line] {
+			matches := make([]int, 0)
 			// Search lines above and below current line
 			for i := searchStart; i <= searchEnd; i++ {
 				for _, number := range numberMap[i] {
+					// number is adjacent
 					if number.Start-1 <= symbol.Position &&
 						number.End >= symbol.Position &&
 						!number.Counted {
-						// number is adjacent
-						sum += number.Value
+						//fmt.Printf("[%d] %s\t[%d] %d\n", line, symbol.Value, i, number.Value)
+						// Part 1: Find sum of all part numbers
+						totalPartNumbers += number.Value
 						number.Counted = true
-						fmt.Printf("[%d] %s\t[%d] %d\n", line, symbol.Value, i, number.Value)
+						matches = append(matches, number.Value)
 					}
 				}
 			}
+			// Part 2:
+			if symbol.Value == "*" && len(matches) == 2 {
+				totalGearRatios += matches[0] * matches[1]
+			}
 		}
 	}
-	fmt.Printf("Part 1: Sum of part numbers %d\n", sum)
+	fmt.Printf("Part 1: Sum of part numbers %d\n", totalPartNumbers)
+	fmt.Printf("Part 2: Sum of gear ratios %d\n", totalGearRatios)
 }
 
 func ParseInput(file string) (map[int][]*PartNumber, map[int][]*Symbol, int) {
@@ -54,8 +63,8 @@ func ParseInput(file string) (map[int][]*PartNumber, map[int][]*Symbol, int) {
 	}
 	defer inputFile.Close()
 	fs := bufio.NewScanner(inputFile)
-	reNumbers := regexp.MustCompile(`\d+`)
-	reSymbols := regexp.MustCompile(`[^\w\d\.]`)
+	reNumbers := regexp.MustCompile(`\d+`)       // any digits
+	reSymbols := regexp.MustCompile(`[^\w\d\.]`) // not letters, digits, or .
 	lineIndex := 0
 	for fs.Scan() {
 		line := fs.Text()
@@ -77,7 +86,7 @@ func ParseInput(file string) (map[int][]*PartNumber, map[int][]*Symbol, int) {
 			}
 			allNumbers[lineIndex] = lineNumbers
 		}
-		// Parse symbos from line
+		// Parse symbols from line
 		symbols := reSymbols.FindAllStringIndex(line, -1)
 		if symbols != nil {
 			lineSymbols := make([]*Symbol, len(symbols))
