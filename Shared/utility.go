@@ -3,6 +3,7 @@ package shared
 import (
 	"bufio"
 	"os"
+	"strconv"
 )
 
 func ReadInputFile(file string) []string {
@@ -20,4 +21,12 @@ func ReadInputFile(file string) []string {
 		lines = append(lines, line)
 	}
 	return lines
+}
+func StringsToInts(s []string) []int {
+	ints := make([]int, len(s))
+	for i := 0; i < len(s); i++ {
+		value, _ := strconv.Atoi(s[i])
+		ints[i] = value
+	}
+	return ints
 }
