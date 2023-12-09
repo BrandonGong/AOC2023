@@ -3,6 +3,7 @@ package shared
 import (
 	"bufio"
 	"os"
+	"regexp"
 	"strconv"
 )
 
@@ -29,4 +30,9 @@ func StringsToInts(s []string) []int {
 		ints[i] = value
 	}
 	return ints
+}
+
+func ParseIntsFromLine(line string) []int {
+	re := regexp.MustCompile(`\d+`)
+	return StringsToInts(re.FindAllString(line, -1))
 }
